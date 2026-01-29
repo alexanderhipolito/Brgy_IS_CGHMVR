@@ -1,61 +1,85 @@
 @extends('layouts.app')
+
 @section('title', 'Resident Details')
+
 @section('content')
-<div class="mb-6 flex justify-between items-center">
-    <div>
-        <a href="{{ route('residents.index') }}" class="text-blue-600 hover:text-blue-800">&larr; Back to List</a>
-        <h1 class="text-2xl font-bold mt-2">Resident Details</h1>
+{{-- Header Section with Circle Back Button --}}
+<div class="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-4">
+        {{-- Circle Back Button --}}
+        <a href="{{ route('residents.index') }}" 
+           class="flex items-center justify-center w-10 h-10 bg-white border border-slate-200 rounded-full text-slate-600 hover:text-blue-600 hover:border-blue-100 hover:shadow-md transition-all duration-300 shadow-sm group">
+            <svg class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+            </svg>
+        </a>
+
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Resident Profile View</h1>
+            <p class="text-sm text-slate-500 font-medium tracking-tight">Reviewing personal and household information.</p>
+        </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+        {{-- Action Button Styled like "Add New Resident" --}}
+        <a href="{{ route('residents.edit', $resident->id) }}" 
+           class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-bold text-sm shadow-sm transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit Profile
+        </a>
     </div>
 </div>
 
-{{-- Layout changed to a simpler single column or 2/3 width to handle the removed sidebar --}}
 <div class="max-w-5xl space-y-6">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="bg-blue-50 px-6 py-4 border-b border-blue-100">
-            <h3 class="text-lg font-bold text-blue-800 uppercase tracking-wide">1. Personal Profile</h3>
+    {{-- Personal Profile Card --}}
+    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="bg-slate-50/50 px-6 py-4 border-b border-slate-100">
+            <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest">1. Personal Profile</h3>
         </div>
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
                 <div>
-                    <dt class="text-xs font-semibold text-gray-500 uppercase">Full Name</dt>
-                    <dd class="mt-1 text-lg text-gray-900 font-bold uppercase">
+                    <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Full Name</dt>
+                    <dd class="mt-1 text-lg text-slate-700 font-black uppercase tracking-tight">
                         {{ $resident->first_name }} {{ $resident->middle_name }} {{ $resident->last_name }} {{ $resident->suffix }}
                     </dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-semibold text-gray-500 uppercase">Birth Information</dt>
-                    <dd class="mt-1 text-sm text-gray-900">
-                        <strong>{{ \Carbon\Carbon::parse($resident->birthdate)->format('F d, Y') }}</strong> 
-                        <span class="text-gray-500 ml-1">({{ \Carbon\Carbon::parse($resident->birthdate)->age }} yrs old)</span>
-                        <br><span class="text-xs italic text-gray-500">Born in: {{ $resident->birthplace ?? 'Not Specified' }}</span>
+                    <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Birth Information</dt>
+                    <dd class="mt-1 text-sm text-slate-600">
+                        <strong class="text-slate-800">{{ \Carbon\Carbon::parse($resident->birthdate)->format('F d, Y') }}</strong> 
+                        <span class="text-slate-400 ml-1 italic">({{ \Carbon\Carbon::parse($resident->birthdate)->age }} yrs old)</span>
+                        <br><span class="text-xs text-slate-400 italic font-medium">Place of Birth: {{ $resident->birthplace ?? 'Not Specified' }}</span>
                     </dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-semibold text-gray-500 uppercase">Gender & Civil Status</dt>
-                    <dd class="mt-1 text-sm text-gray-900">
-                        {{ $resident->gender }} | {{ $resident->civil_status }}
+                    <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Gender & Civil Status</dt>
+                    <dd class="mt-1 text-sm text-slate-700 font-semibold uppercase">
+                        {{ $resident->gender }} <span class="text-slate-300 mx-2">|</span> {{ $resident->civil_status }}
                     </dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-semibold text-gray-500 uppercase">Citizenship & Occupation</dt>
-                    <dd class="mt-1 text-sm text-gray-900">
-                        {{ $resident->citizenship }} | {{ $resident->occupation ?? 'None/Unemployed' }}
+                    <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Citizenship & Occupation</dt>
+                    <dd class="mt-1 text-sm text-slate-700 font-semibold uppercase">
+                        {{ $resident->citizenship }} <span class="text-slate-300 mx-2">|</span> {{ $resident->occupation ?? 'None/Unemployed' }}
                     </dd>
-                    {{-- CONTACT NUMBER MOVED HERE --}}
-                    <div class="mt-4 pt-4 border-t border-gray-50">
-                        <dt class="text-xs font-semibold text-gray-500 uppercase">Contact Number</dt>
-                        <dd class="mt-1 text-lg text-blue-600 font-bold">
-                            {{ $resident->contact_number ?? 'No Number' }}
+                    
+                    <div class="mt-4 pt-4 border-t border-slate-50">
+                        <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Contact Number</dt>
+                        <dd class="mt-1 text-lg text-blue-600 font-black">
+                            {{ $resident->contact_number ?? '---' }}
                         </dd>
                     </div>
                 </div>
                 <div>
-                    <dt class="text-xs font-semibold text-gray-500 uppercase">Voter Status</dt>
+                    <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Voter Status</dt>
                     <dd class="mt-1">
                         @if($resident->is_voter)
-                            <span class="px-3 py-1 text-xs font-bold bg-green-100 text-green-700 rounded-full italic">REGISTERED VOTER</span>
+                            <span class="px-3 py-1 text-[10px] font-black bg-green-100 text-green-600 rounded-md uppercase italic">REGISTERED VOTER</span>
                         @else
-                            <span class="px-3 py-1 text-xs font-bold bg-gray-100 text-gray-500 rounded-full italic">NON-VOTER</span>
+                            <span class="px-3 py-1 text-[10px] font-black bg-slate-100 text-slate-400 rounded-md uppercase italic">NON-VOTER</span>
                         @endif
                     </dd>
                 </div>
@@ -63,25 +87,26 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="bg-blue-50 px-6 py-4 border-b border-blue-100">
-            <h3 class="text-lg font-bold text-blue-800 uppercase tracking-wide">2. Household & Location</h3>
+    {{-- Household & Location Card --}}
+    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="bg-slate-50/50 px-6 py-4 border-b border-slate-100">
+            <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest">2. Household & Location</h3>
         </div>
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
-                    <dt class="text-xs font-semibold text-gray-500 uppercase">Full Address</dt>
-                    <dd class="mt-1 text-sm text-gray-900 font-medium">{{ $resident->address }}</dd>
+                    <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Full Address</dt>
+                    <dd class="mt-1 text-sm text-slate-700 font-bold uppercase">{{ $resident->address }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-semibold text-gray-500 uppercase">Household ID</dt>
-                    <dd class="mt-1 text-sm text-gray-900 font-mono">{{ $resident->household_id ?? 'N/A' }}</dd>
+                    <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Household ID</dt>
+                    <dd class="mt-1 text-sm text-slate-600 font-mono font-bold">{{ $resident->household_id ?? 'N/A' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-semibold text-gray-500 uppercase">Ownership & Role</dt>
-                    <dd class="mt-1 text-sm text-gray-900">
+                    <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ownership & Role</dt>
+                    <dd class="mt-1 text-sm text-slate-700 font-bold uppercase">
                         {{ $resident->home_ownership }} 
-                        {!! $resident->is_family_head ? '<span class="ml-2 font-bold text-indigo-600">(Head of Family)</span>' : '' !!}
+                        {!! $resident->is_family_head ? '<span class="ml-2 text-indigo-600 italic tracking-tighter">(Head of Family)</span>' : '' !!}
                     </dd>
                 </div>
             </div>

@@ -7,10 +7,38 @@ use Illuminate\Http\Request;
 
 class ResidentController extends Controller
 {
-    public function index()
+    /**
+     * Display a listing of the residents.
+     * Supports Live Search via AJAX.
+     */
+    public function index(Request $request)
     {
-        $residents = Resident::latest()->paginate(10);
-        return view('residents.index', compact('residents'));
+        // 1. Kunin ang search query mula sa request
+        $search = $request->input('search');
+
+        // 2. Query logic na may Search Filter para sa iba't ibang fields
+        $residents = Resident::query()
+            ->when($search, function ($query, $search) {
+                return $query->where(function($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                      ->orWhere('middle_name', 'like', "%{$search}%")
+                      ->orWhere('last_name', 'like', "%{$search}%")
+                      ->orWhere('household_id', 'like', "%{$search}%")
+                      ->orWhere('address', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString(); // Panatilihin ang search term sa pagination links
+
+        // 3. AJAX Check: Kung ang request ay galing sa JavaScript (keyup), 
+        // ibalik lang ang partial view (table rows) para hindi mag-refresh ang buong page.
+        if ($request->ajax()) {
+            return view('residents.partials.table-rows', compact('residents'))->render();
+        }
+
+        // 4. Normal Load: I-pass ang $residents at $search value sa buong view
+        return view('residents.index', compact('residents', 'search'));
     }
 
     public function create()
@@ -58,7 +86,6 @@ class ResidentController extends Controller
 
     public function update(Request $request, Resident $resident)
     {
-        // 1. I-validate lahat ng fields para pwedeng baguhin kahit alin dyan
         $validated = $request->validate([
             'first_name'     => 'required|string|max:255',
             'middle_name'    => 'nullable|string|max:255',
@@ -78,10 +105,8 @@ class ResidentController extends Controller
             'contact_number' => 'nullable|string',
         ]);
 
-        // 2. I-update ang record sa database
         $resident->update($validated);
 
-        // 3. Balik sa listahan o sa details page
         return redirect()->route('residents.index')->with('success', 'Resident profile updated successfully!');
     }
 
