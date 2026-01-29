@@ -15,7 +15,7 @@
         </a>
 
         <div>
-            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Resident Profile</h1>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Resident Profile View</h1>
             <p class="text-sm text-slate-500 font-medium tracking-tight">Reviewing personal and household information.</p>
         </div>
     </div>
