@@ -3,18 +3,26 @@
 use App\Http\Controllers\DemographicController;
 use App\Http\Controllers\ResidentController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
-// UI-only demo routes
 Route::view('/login', 'auth.login')->name('login');
+
 Route::resource('residents', ResidentController::class);
 Route::resource('demographic', DemographicController::class);
+
 Route::post('/login', function () {
-    // Placeholder for Fortify or custom login action
-    return redirect('/admin/dashboard');
+    return redirect()->route('residents.index');
 })->name('login.post');
-Route::view('/admin/dashboard', 'admin.dashboard')->name('admin.dashboard');
+
 Route::view('/auth/change-password', 'auth.change-password')->name('password.change');
+
+Route::post('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
+})->name('logout');
